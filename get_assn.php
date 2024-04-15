@@ -1,6 +1,6 @@
 <?php
 /**
- * test_creds.php provides specific data for testing - .gitignore will not include test_creds data.
+ * test_creds.php provides specific data for testing
  * @var $canURL String Canvas URL
  * @var $cID Number user ID
  * @var $assnID Number assignment ID
