@@ -12,7 +12,7 @@
  * @function apiCall takes three params: method, url, and data. data is not required.
  * @function prettyPrint
  */
-include 'test_creds.php';
+include './creds/test_creds.php';
 include 'func_calls.php';
 $headers = ["Authorization: Bearer $uToken", 'Content-Type: application/json'];
 echo "<u>INSTRUCTOR - VERGIL GUNCH, ANT101</u>\n\n";
