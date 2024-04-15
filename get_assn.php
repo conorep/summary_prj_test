@@ -16,12 +16,12 @@
 include './creds/test_creds.php';
 include 'func_calls.php';
 $headers = ["Authorization: Bearer $uToken", 'Content-Type: application/json'];
-echo "<u>INSTRUCTOR - VERGIL GUNCH, ANT101</u>\n\n";
+echo "<h3><u>INSTRUCTOR - VERGIL GUNCH, ANT101</u></h3>\n\n";
 getReqdData();
 
 $headers[0] = "Authorization: Bearer $stuToken";
 $stuID = 'self';
-echo "\n\n\n\n\n\n<u>STUDENT - SUSAN B ANTHONY, ANT101</u>\n\n";
+echo "\n\n\n\n\n\n<h3><u>STUDENT - SUSAN B ANTHONY, ANT101</h3></u>\n\n";
 getReqdData();
 
 function printRes($method, $url, $data, $printStatement) {
