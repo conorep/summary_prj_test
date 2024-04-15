@@ -4,6 +4,7 @@
  * @var $canURL String Canvas URL
  * @var $cID Number user ID
  * @var $assnID Number assignment ID
+ * @var $rubID Number rubric ID
  * @var $uToken String instructor user access token
  * @var $stuID Number|String student ID
  * @var $stuToken String student user access token
@@ -29,22 +30,23 @@ function printRes($method, $url, $data, $printStatement) {
     $assnData = apiCall($method, $url, $data, $headers);
     $assnData = json_decode($assnData);
     echo "$printStatement:\n\n";
-    var_dump($assnData);
+    print_r($assnData);
     echo "\n\n";
 }
 
 function getReqdData() {
-	global $canURL, $cID, $assnID, $stuID;
-	//get a single assignment download
-	$getSub = $canURL."api/v1/courses/$cID/assignments/$assnID/submissions/$stuID";
+	global $canURL, $cID, $assnID, $rubID, $stuID;
+
+    echo "<u>Get a single assignment download:</u>\n";
+	$getSub = $canURL."api/v1/courses/$cID/assignments/$assnID/submissions/$stuID".
+        "?include[]=assignment&include[]=full_rubric_assessment";
 	printRes('GET', $getSub, NULL, 'ASSIGNMENT DATA');
 
-
-	//get a single assignment rubric
-	$getRub = $canURL."api/v1/courses/$cID/rubrics/$assnID";
+    echo "<u>Get a single assignment rubric:</u>\n";
+    $getRub = $canURL."api/v1/courses/$cID/rubrics/$rubID";
 	printRes('GET', $getRub, NULL, 'RUBRIC DATA');
 
-	//get all rubrics from course
-	$getRubs = $canURL."api/v1/courses/$cID/rubrics";
+    echo "<u>Get all rubrics from course:</u>\n";
+    $getRubs = $canURL."api/v1/courses/$cID/rubrics";
 	printRes('GET', $getRubs, NULL, 'ALL RUBRIC DATA');
 }
