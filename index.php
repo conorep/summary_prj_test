@@ -5,6 +5,6 @@
     <title>Title</title>
 </head>
 <body>
-    <pre><code><?php include 'getAssn.php'; ?></code></pre>
+    <pre><code><?php include 'get_assn.php'; ?></code></pre>
 </body>
 </html>
