@@ -33,24 +33,3 @@ function apiCall($method, $url, $data, $headers) {
 
     return $result;
 }
-
-//TODO: in work - need to fine tune. type checking always a must.
-/**
- * Returns a nice version of object that can be printed in a readable manner.
- * @param $arr array object to be displayed
- * @return string
- */
-function prettyPrint($arr) {
-    $retStr = '<ul>';
-    if (is_array($arr)){
-        foreach ($arr as $key=>$val){
-            if (is_array($val)){
-                $retStr .= '<li>' . $key . ' => ' . prettyPrint($val) . '</li>';
-            }else{
-                $retStr .= '<li>' . $key . ' => ' . $val . '</li>';
-            }
-        }
-    }
-    $retStr .= '</ul>';
-    return $retStr;
-}
