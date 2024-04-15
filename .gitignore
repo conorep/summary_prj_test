@@ -1,1 +1,5 @@
-./test_creds.php
+# dependencies
+/creds/
+
+# idea/intellij data
+/.idea/
