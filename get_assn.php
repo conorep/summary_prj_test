@@ -16,22 +16,30 @@
 include './creds/test_creds.php';
 include 'func_calls.php';
 $headers = ["Authorization: Bearer $uToken", 'Content-Type: application/json'];
-echo "<h3><u>INSTRUCTOR - VERGIL GUNCH, ANT101</u></h3>\n\n";
+echo "<h3><u>INSTRUCTOR - VERGIL GUNCH, ANT101</u></h3><br/>";
 getReqdData();
 
 //$headers[0] = "Authorization: Bearer $stuToken";
-$stuID = 'self';
+//$stuID = 'self';
 //echo "\n\n\n\n\n\n<h3><u>STUDENT - SUSAN B ANTHONY, ANT101</h3></u>\n\n";
 //getReqdData();
 
-function printRes($method, $url, $data, $printStatement) {
+/**
+ * A simple 'print response' function utilizing returnRes.
+ * @param $method String GET, POST
+ * @param $url String
+ * @param $data array|null
+ * @param $printStatement String statement shown before printing the query response data
+ * @return void
+ */
+function printRes(string $method, string $url, array $data, string $printStatement) {
     $assnData = returnRes($method, $url, $data);
     echo "$printStatement:\n\n";
     print_r($assnData);
     echo "\n\n";
 }
 
-function returnRes($method, $url, $data, $extraOpts = null, $jsonEncodeIt = true) {
+function returnRes($method, $url, $data = null, $extraOpts = null, $jsonEncodeIt = true) {
     global $headers;
 
     $assnData = apiCall($method, $url, $data, $headers, $extraOpts);
@@ -41,43 +49,76 @@ function returnRes($method, $url, $data, $extraOpts = null, $jsonEncodeIt = true
     return $assnData;
 }
 
-function getReqdData() {
-	global $canURL, $cID, $assnID, $rubID, $stuID, $headers;
+function buildCanUrl(): string {
+	global $canURL, $cID, $assnID, $stuID;
+	
+	return $canURL."/api/v1/courses/$cID/assignments/$assnID/submissions/$stuID".
+		"?include[]=assignment&include[]=full_rubric_assessment";
+}
 
-    //echo "<u>Get a single assignment download:</u>\n";
-	$getSub = $canURL."/api/v1/courses/$cID/assignments/$assnID/submissions/$stuID".
-        "?include[]=assignment&include[]=full_rubric_assessment";
-	//printRes('GET', $getSub, NULL, 'ASSIGNMENT DATA');
+function getReqdData() {
+	global $canURL, $headers;
 
     // get from res... .attachments.preview_url
-    $resURL = returnRes('GET', $getSub, NULL);
-    print_r($resURL);
+	$getSub = buildCanUrl();
+	$resURL = returnRes('GET', $getSub);
+    // print_r($resURL);
     $thisResURL = $resURL['attachments'][0]['preview_url'];
-//    $thisResURL = rawurldecode($thisResURL);
     $getPreview = $canURL.$thisResURL;
-    echo "\n\nPREVIEW URL:\n" . $getPreview . "\n\n";
+    echo "\n<u>PREVIEW URL:</u>\n" . $getPreview . "\n\n";
 
     $headers[1] = 'Content-Type: text/html';
     $theRedirect = returnRes('GET', $getPreview, NULL, NULL, false);
-    echo "\n\nREDIRECT RETURN:\n".$theRedirect."\n\n";
-    $headers[1] = 'Content-Type: application/json';
+    echo "\n\n<u>REDIRECT RETURN (don't click link - collecting href):</u>\n".$theRedirect."\n\n";
+    $headers[1] = 'Content-Type: text/plain';
 
-    $htmlReturn = explode('href="', $theRedirect)[1];
-    $htmlReturn = explode('">', $htmlReturn)[0];
-    $htmlReturn = explode('/view', $htmlReturn)[0];
-    $htmlReturn .= '/annotated.pdf';
-    echo "\n\nREDIRECT URL (TUNED UP):\n".$htmlReturn."\n";
+	// build proper URI string
+    $redReturn = explode('href="', $theRedirect)[1];
+	$redReturn = explode('">', $redReturn)[0];
+	$redReturn = explode('/view', $redReturn)[0];
+	$redReturn .= '/annotated.pdf';
+    echo "\n\n<u>REDIRECT URL (TUNED UP):</u>\n".$redReturn."\n";
 
-    //now post to the htmlReturn redirect URL. should get 'Accepted' as return data.
-    $startAnnoBuild = returnRes('POST', $htmlReturn, NULL);
-    print_r($startAnnoBuild);
+    // POST to the htmlReturn redirect URL. should get 'Accepted' as return data.
+    $startAnnoBuild = returnRes('POST', $redReturn, NULL, NULL, false);
+	echo "\n\n<u>WAS POST ACCEPTED OR NOT?</u>\n".$startAnnoBuild."\n";
+	
+	if($startAnnoBuild === 'Accepted') {
+		$headers[1] = 'Content-Type: application/json';
+		checkingReady($redReturn, 0);
+	} else {
+		echo "\n\nCanvas said we can't build this annotated PDF - something went wrong.";
+	}
+}
+
+function checkingReady(String $annoReady, int $numTries) {
+	if($numTries < 30) {
+		$readyCheckStr = $annoReady . '/is_ready';
+		$checkReady = returnRes('GET', $readyCheckStr);
+		if($checkReady && $checkReady['ready'] === true) {
+			$totalTime = $numTries * 150 . '';
+			echo "<div>Document preparation took ~$totalTime milliseconds.</div>";
+			echo "<br/><br/><a id='getThisFile' href='$annoReady'>DOWNLOAD FILE</a>";
+		} else {
+			echo "\nTRY  #$numTries";
+			usleep(150);
+			checkingReady($annoReady, $numTries+1);
+		}
+	} else {
+		echo "<br/><h4>Ah, no good. Bummer!</h4>";
+	}
+}
 
 
-//    echo "<u>Get a single assignment rubric:</u>\n";
-//    $getRub = $canURL."/api/v1/courses/$cID/rubrics/$rubID";
-//	printRes('GET', $getRub, NULL, 'RUBRIC DATA');
-//
-//    echo "<u>Get all rubrics from course:</u>\n";
-//    $getRubs = $canURL."/api/v1/courses/$cID/rubrics";
-//	printRes('GET', $getRubs, NULL, 'ALL RUBRIC DATA');
+function printReqdData() {
+	global $canURL, $cID, $rubID;
+	$getSub = buildCanUrl();
+	echo "<u>Get a single assignment download:</u>\n";
+	printRes('GET', $getSub, NULL, 'ASSIGNMENT DATA');
+	$getRub = $canURL."/api/v1/courses/$cID/rubrics/$rubID";
+	echo "<u>Get a single assignment rubric:</u>\n";
+	printRes('GET', $getRub, NULL, 'RUBRIC DATA');
+	$getRubs = $canURL."/api/v1/courses/$cID/rubrics";
+	echo "<u>Get all rubrics from course:</u>\n";
+	printRes('GET', $getRubs, NULL, 'ALL RUBRIC DATA');
 }
