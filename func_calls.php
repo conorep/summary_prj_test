@@ -11,7 +11,7 @@ $curl = curl_init();
  * @param $extraOpts array|null additional options or null
  * @return bool|string
  */
-function apiCall(String $method, String $url, array $data = null, array $headers, array $extraOpts = null) {
+function apiCall(String $method, String $url, ?array $data, array $headers, ?array $extraOpts) {
     global $curl;
     if($method === 'GET' && $data) {
         $url = sprintf("%s?%s", $url, http_build_query($data));
