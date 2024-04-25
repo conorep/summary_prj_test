@@ -19,9 +19,9 @@ $headers = ["Authorization: Bearer $uToken", 'Content-Type: application/json'];
 echo "<h3><u>INSTRUCTOR - VERGIL GUNCH, ANT101</u></h3>\n\n";
 getReqdData();
 
-$headers[0] = "Authorization: Bearer $stuToken";
+//$headers[0] = "Authorization: Bearer $stuToken";
 $stuID = 'self';
-echo "\n\n\n\n\n\n<h3><u>STUDENT - SUSAN B ANTHONY, ANT101</h3></u>\n\n";
+//echo "\n\n\n\n\n\n<h3><u>STUDENT - SUSAN B ANTHONY, ANT101</h3></u>\n\n";
 //getReqdData();
 
 function printRes($method, $url, $data, $printStatement) {
@@ -36,34 +36,41 @@ function returnRes($method, $url, $data, $extraOpts = null, $jsonEncodeIt = true
 
     $assnData = apiCall($method, $url, $data, $headers, $extraOpts);
     if($jsonEncodeIt) {
-        return json_decode($assnData);
+        return json_decode($assnData, true);
     }
     return $assnData;
 }
 
 function getReqdData() {
-	global $canURL, $cID, $assnID, $rubID, $stuID;
+	global $canURL, $cID, $assnID, $rubID, $stuID, $headers;
 
-    echo "<u>Get a single assignment download:</u>\n";
+    //echo "<u>Get a single assignment download:</u>\n";
 	$getSub = $canURL."/api/v1/courses/$cID/assignments/$assnID/submissions/$stuID".
         "?include[]=assignment&include[]=full_rubric_assessment";
 	//printRes('GET', $getSub, NULL, 'ASSIGNMENT DATA');
 
     // get from res... .attachments.preview_url
     $resURL = returnRes('GET', $getSub, NULL);
-    $thisResURL = $resURL['attachments']['preview_url'];
+    print_r($resURL);
+    $thisResURL = $resURL['attachments'][0]['preview_url'];
+//    $thisResURL = rawurldecode($thisResURL);
     $getPreview = $canURL.$thisResURL;
+    echo "\n\nPREVIEW URL:\n" . $getPreview . "\n\n";
 
-    $theRedirect = returnRes('GET', $getPreview, NULL, [CURLOPT_FOLLOWLOCATION => 0], false);
-    print_r($theRedirect);
+    $headers[1] = 'Content-Type: text/html';
+    $theRedirect = returnRes('GET', $getPreview, NULL, NULL, false);
+    echo "\n\nREDIRECT RETURN:\n".$theRedirect."\n\n";
+    $headers[1] = 'Content-Type: application/json';
+
     $htmlReturn = explode('href="', $theRedirect)[1];
     $htmlReturn = explode('">', $htmlReturn)[0];
     $htmlReturn = explode('/view', $htmlReturn)[0];
-    $htmlReturn .= 'annotated.pdf';
+    $htmlReturn .= '/annotated.pdf';
+    echo "\n\nREDIRECT URL (TUNED UP):\n".$htmlReturn."\n";
 
     //now post to the htmlReturn redirect URL. should get 'Accepted' as return data.
     $startAnnoBuild = returnRes('POST', $htmlReturn, NULL);
-    echo($startAnnoBuild);
+    print_r($startAnnoBuild);
 
 
 //    echo "<u>Get a single assignment rubric:</u>\n";

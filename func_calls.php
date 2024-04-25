@@ -1,5 +1,6 @@
 <?php
 // Data: array("param" => "value") ==> index.php?param=value
+$curl = curl_init();
 
 /**
  * This function calls the specified API using the data provided via parameters.
@@ -10,16 +11,15 @@
  * @param $extraOpts array|null additional options or null
  * @return bool|string
  */
-function apiCall(String $method, String $url, array $data, array $headers, array $extraOpts = null) {
-    $curl = curl_init();
-
+function apiCall(String $method, String $url, array $data = null, array $headers, array $extraOpts = null) {
+    global $curl;
     if($method === 'GET' && $data) {
         $url = sprintf("%s?%s", $url, http_build_query($data));
     }
 
     $optionsArr = [
         CURLOPT_CUSTOMREQUEST => $method,
-        CURLOPT_RETURNTRANSFER => TRUE,
+        CURLOPT_RETURNTRANSFER => 1,
         CURLOPT_URL => $url,
         CURLOPT_HTTPHEADER => $headers
     ];
@@ -33,8 +33,6 @@ function apiCall(String $method, String $url, array $data, array $headers, array
     }
 
     curl_setopt_array($curl, $optionsArr);
-    $result = curl_exec($curl);
-    curl_close($curl);
-
-    return $result;
+    return curl_exec($curl);
 }
+
