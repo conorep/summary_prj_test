@@ -7,9 +7,10 @@
  * @param $url String the API URI
  * @param $data array|null data for call or nothing at all
  * @param $headers array headers that may include data type and access token
+ * @param $extraOpts array|null additional options or null
  * @return bool|string
  */
-function apiCall($method, $url, $data, $headers) {
+function apiCall(String $method, String $url, array $data, array $headers, array $extraOpts = null) {
     $curl = curl_init();
 
     if($method === 'GET' && $data) {
@@ -22,6 +23,10 @@ function apiCall($method, $url, $data, $headers) {
         CURLOPT_URL => $url,
         CURLOPT_HTTPHEADER => $headers
     ];
+
+    if($extraOpts) {
+        $optionsArr = array_merge($optionsArr, $extraOpts);
+    }
 
     if($method === 'POST' && $data) {
         $optionsArr[CURLOPT_POSTFIELDS] = $data;
