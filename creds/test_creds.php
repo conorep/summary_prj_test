@@ -1,7 +1,7 @@
 <?php
 
 // using Vergil Gunch with ANT101 for instructor tests
-$canURL = 'https://qwickly.instructure.com/';
+$canURL = 'https://qwickly.instructure.com';
 $cID = 17; //course id
 $assnID = 31; //anthropology paper
 $rubID = 105; //rubric ID
