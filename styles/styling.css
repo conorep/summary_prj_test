@@ -1,7 +1,16 @@
+body {
+  max-width: 100VW;
+}
+
 div.initHide {
   display: none;
 }
+
+div.initHide.showerDiv {
+  display: block;
+}
+
 div {
   max-width: 100%;
-text-wrap: normal
+  overflow-wrap: break-word;
 }

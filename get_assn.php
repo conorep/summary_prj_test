@@ -42,13 +42,14 @@ function printRes(string $method, string $url, array $data, string $printStateme
 /**
  * A simple 'get and build HTML from response' function utilizing returnRes.
  * @param array $resURL
+ * @return string
  */
-function buildRes(array $resURL) {
+function buildRes(array $resURL): string {
 	$printedRes = print_r($resURL, true);
 	return
 		"<div class='formatJson'>
 			<button type='button' id='jsonShower'>Show JSON data?</button>
-			<div class='initHide'>".$printedRes."</div>
+			<div class='initHide'><pre>$printedRes</pre></div>
 		</div>";
 }
 
@@ -87,11 +88,11 @@ function getReqdData() {
     echo buildRes($resURL);
     $thisResURL = $resURL['attachments'][0]['preview_url'];
     $getPreview = $canURL.$thisResURL;
-    echo "\n<u>PREVIEW URL:</u>\n" . $getPreview . "\n\n";
+    echo "<div><br/><u>PREVIEW URL:</u><br/><div>$getPreview</div><br/><br/>";
 
     $headers[1] = 'Content-Type: text/html';
     $theRedirect = returnRes('GET', $getPreview, NULL, NULL, false);
-    echo "\n\n<u>REDIRECT RETURN (don't click link - collecting href):</u>\n$theRedirect\n\n";
+    echo "<br/><u>REDIRECT RETURN (don't click link - collecting href):</u><br/><div>$theRedirect</div><br/><br/>";
     $headers[1] = 'Content-Type: text/plain';
 
 	// build proper URI string
@@ -99,18 +100,19 @@ function getReqdData() {
 	$redReturn = explode('">', $redReturn)[0];
 	$redReturn = explode('/view', $redReturn)[0];
 	$redReturn .= '/annotated.pdf';
-    echo "\n\n<u>REDIRECT URL (TUNED UP):</u>\n".$redReturn."\n";
+    echo "<br/><u>REDIRECT URL (TUNED UP):</u><br/>".$redReturn."<br/><br/>";
 
     // POST to the htmlReturn redirect URL. should get 'Accepted' as return data.
     $startAnnoBuild = returnRes('POST', $redReturn, NULL, NULL, false);
-	echo "\n\n<u>WAS POST ACCEPTED OR NOT?</u>\n$startAnnoBuild\n";
+	echo "<br/><u>WAS POST ACCEPTED OR NOT?</u><br/><div>$startAnnoBuild</div><br/><br/>";
 	
 	if($startAnnoBuild === 'Accepted') {
 		$headers[1] = 'Content-Type: application/json';
 		checkingReady($redReturn, 0);
 	} else {
-		echo "\n\nCanvas said we can't build this annotated PDF - something went wrong.";
+		echo "<br/>Canvas said we can't build this annotated PDF - something went wrong.";
 	}
+	echo "</div>";
 }
 
 function checkingReady(String $annoReady, int $numTries) {
