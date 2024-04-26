@@ -124,7 +124,7 @@ function checkingReady(String $annoReady, int $numTries) {
 			echo "<div>Document preparation took ~$totalTime milliseconds.</div>";
 			echo "<br/><br/><a id='getThisFile' href='$annoReady'>DOWNLOAD FILE</a>";
 		} else {
-			echo "\nTRY  #$numTries";
+			echo "<br/>TRY  #$numTries";
 			usleep(150);
 			checkingReady($annoReady, $numTries+1);
 		}
