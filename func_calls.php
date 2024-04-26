@@ -1,5 +1,4 @@
 <?php
-// Data: array("param" => "value") ==> index.php?param=value
 $curl = curl_init();
 
 /**

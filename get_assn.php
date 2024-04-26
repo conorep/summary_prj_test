@@ -39,7 +39,27 @@ function printRes(string $method, string $url, array $data, string $printStateme
     echo "\n\n";
 }
 
-function returnRes($method, $url, $data = null, $extraOpts = null, $jsonEncodeIt = true) {
+/**
+ * A simple 'get and build HTML from response' function utilizing returnRes.
+ * @param array $resURL
+ */
+function buildRes(array $resURL) {
+	$printedRes = print_r($resURL, true);
+	return
+		"<div class='formatJson'>
+			<button type='button' id='jsonShower'>Show JSON data?</button>
+			<div class='initHide'>".$printedRes."</div>
+		</div>";
+}
+
+/**
+ * A simple 'get data, return response' function utilizing apiCall.
+ * @param $method String GET, POST
+ * @param $data array|null
+ * @param null $extraOpts
+ * @return bool|mixed|string
+ */
+function returnRes(string $method, string $url, array $data = NULL, $extraOpts = NULL, bool $jsonEncodeIt = true) {
     global $headers;
 
     $assnData = apiCall($method, $url, $data, $headers, $extraOpts);
@@ -48,6 +68,8 @@ function returnRes($method, $url, $data = null, $extraOpts = null, $jsonEncodeIt
     }
     return $assnData;
 }
+
+
 
 function buildCanUrl(): string {
 	global $canURL, $cID, $assnID, $stuID;
@@ -62,14 +84,14 @@ function getReqdData() {
     // get from res... .attachments.preview_url
 	$getSub = buildCanUrl();
 	$resURL = returnRes('GET', $getSub);
-    // print_r($resURL);
+    echo buildRes($resURL);
     $thisResURL = $resURL['attachments'][0]['preview_url'];
     $getPreview = $canURL.$thisResURL;
     echo "\n<u>PREVIEW URL:</u>\n" . $getPreview . "\n\n";
 
     $headers[1] = 'Content-Type: text/html';
     $theRedirect = returnRes('GET', $getPreview, NULL, NULL, false);
-    echo "\n\n<u>REDIRECT RETURN (don't click link - collecting href):</u>\n".$theRedirect."\n\n";
+    echo "\n\n<u>REDIRECT RETURN (don't click link - collecting href):</u>\n$theRedirect\n\n";
     $headers[1] = 'Content-Type: text/plain';
 
 	// build proper URI string
@@ -81,7 +103,7 @@ function getReqdData() {
 
     // POST to the htmlReturn redirect URL. should get 'Accepted' as return data.
     $startAnnoBuild = returnRes('POST', $redReturn, NULL, NULL, false);
-	echo "\n\n<u>WAS POST ACCEPTED OR NOT?</u>\n".$startAnnoBuild."\n";
+	echo "\n\n<u>WAS POST ACCEPTED OR NOT?</u>\n$startAnnoBuild\n";
 	
 	if($startAnnoBuild === 'Accepted') {
 		$headers[1] = 'Content-Type: application/json';
@@ -92,7 +114,7 @@ function getReqdData() {
 }
 
 function checkingReady(String $annoReady, int $numTries) {
-	if($numTries < 30) {
+	if($numTries < 50) {
 		$readyCheckStr = $annoReady . '/is_ready';
 		$checkReady = returnRes('GET', $readyCheckStr);
 		if($checkReady && $checkReady['ready'] === true) {
