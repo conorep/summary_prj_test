@@ -104,7 +104,7 @@ function getReqdData() {
 
     // POST to the htmlReturn redirect URL. should get 'Accepted' as return data.
     $startAnnoBuild = returnRes('POST', $redReturn, NULL, NULL, false);
-	echo "<br/><u>WAS POST ACCEPTED OR NOT?</u><br/><div>$startAnnoBuild</div><br/><br/>";
+	echo "<br/><u>WAS POST ACCEPTED OR NOT?</u><br/><div>$startAnnoBuild</div><br/>";
 	
 	if($startAnnoBuild === 'Accepted') {
 		$headers[1] = 'Content-Type: application/json';
