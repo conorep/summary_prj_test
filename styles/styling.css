@@ -37,7 +37,6 @@ div.conts, div.initHide {
 }
 
 div.conts > div, div.initHide, div.conts, div#centerBtn, div#mainCont {
-  width: 100%;
   max-width: 100%
 }
 
