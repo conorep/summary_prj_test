@@ -1,5 +1,22 @@
 body {
   max-width: 100VW;
+  background-color: whitesmoke;
+  line-height: 15px;
+}
+
+div {
+  max-width: 95%;
+}
+
+div, pre {
+  overflow-wrap: break-word;
+}
+
+pre {
+  white-space: -moz-pre-wrap;
+  white-space: -o-pre-wrap;
+  white-space: pre-wrap;
+  word-wrap: break-word;
 }
 
 div.initHide {
@@ -10,7 +27,70 @@ div.initHide.showerDiv {
   display: block;
 }
 
-div {
-  max-width: 100%;
-  overflow-wrap: break-word;
+div.conts, div.initHide {
+  > div {
+    margin-top: 10px;
+  }
+  > u {
+    font-weight: bold;
+  }
+}
+
+div.conts > div, div.initHide, div.conts, div#centerBtn, div#mainCont {
+  width: 100%;
+  max-width: 100%
+}
+
+div.initHide, div.conts {
+  border: 1px darkgrey solid;
+  border-radius: 10px;
+  padding: 10px 12px;
+  background-color: white;
+  &:hover {
+    border: 1px black solid;
+  }
+}
+
+div#centerBtn {
+  text-align:center;
+}
+
+div#mainCont {
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  flex-flow: column wrap;
+  align-items: center;
+  gap: 15px;
+}
+
+button#jsonShower {
+  background-color: #04AA6D;
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  margin-bottom: 10px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  transition-duration: 0.2s;
+  box-shadow: 4px 4px #999;
+  &:hover {
+    background-color: #08bd7a;
+    color: black;
+  }
+  &:active {
+    background-color: #10bc7e;
+    color:white;
+    box-shadow: 2px 2px #666;
+    transform: translateX(2px) translateY(2px);
+  }
+}
+
+a#getThisFile {
+  font-size: large;
+  font-weight: bold;
 }
