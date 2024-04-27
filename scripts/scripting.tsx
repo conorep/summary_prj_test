@@ -1,14 +1,23 @@
 // @ts-check
 const hiderButton = document.getElementById('jsonShower');
-hiderButton.addEventListener('click', toggleShowJSON);
+let hiderDiv = document.getElementsByClassName('initHide')[0];
 
-function toggleShowJSON() {
-    let hiderDiv = document.getElementsByClassName('initHide')[0];
+const toggleShowJSON = () : void => {
+    let sendFunc: Function;
     if(hiderDiv.classList.contains('showerDiv')) {
-        hiderDiv.classList.remove('showerDiv');
-        hiderButton.innerHTML = 'Show JSON data?';
+        sendFunc = () => hiderDiv.classList.remove('showerDiv');
+        timeout200(sendFunc, 'Show');
     } else {
-        hiderDiv.classList.add('showerDiv');
-        hiderButton.innerHTML = 'Hide JSON data?';
+        sendFunc = () => hiderDiv.classList.add('showerDiv');
+        timeout200(sendFunc, 'Hide');
     }
 }
+
+const timeout200 = (doThis: Function, theString : String) : void => {
+    setTimeout(() => {
+        doThis();
+        hiderButton.innerHTML = theString+' JSON data?';
+    }, 200);
+}
+
+hiderButton.addEventListener('click', toggleShowJSON);
