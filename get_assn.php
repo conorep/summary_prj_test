@@ -16,7 +16,7 @@
 include './creds/test_creds.php';
 include 'func_calls.php';
 $headers = ["Authorization: Bearer $uToken", 'Content-Type: application/json'];
-echo "<h3><u>INSTRUCTOR - VERGIL GUNCH, ANT101</u></h3><br/>";
+echo "<h3><u>INSTRUCTOR - VERGIL GUNCH, ANT101</u></h3>";
 getReqdData();
 
 //$headers[0] = "Authorization: Bearer $stuToken";
@@ -45,12 +45,12 @@ function printRes(string $method, string $url, array $data, string $printStateme
  * @return string
  */
 function buildRes(array $resURL): string {
-	$printedRes = print_r($resURL, true);
+	$printedRes = json_encode($resURL, JSON_PRETTY_PRINT);
 	return
-		"<div class='formatJson'>
-			<button type='button' id='jsonShower'>Show JSON data?</button>
-			<div class='initHide'><pre>$printedRes</pre></div>
-		</div>";
+		"<div id='centerBtn'><button type='button' id='jsonShower'>Show JSON data?</button></div>
+		 <div class='formatJson'>
+			<div class='initHide'><u>SUBMISSION DATA:</u><pre>$printedRes</pre></div>
+		 </div>";
 }
 
 /**
@@ -70,8 +70,6 @@ function returnRes(string $method, string $url, array $data = NULL, $extraOpts =
     return $assnData;
 }
 
-
-
 function buildCanUrl(): string {
 	global $canURL, $cID, $assnID, $stuID;
 	
@@ -88,11 +86,12 @@ function getReqdData() {
     echo buildRes($resURL);
     $thisResURL = $resURL['attachments'][0]['preview_url'];
     $getPreview = $canURL.$thisResURL;
-    echo "<div><br/><u>PREVIEW URL:</u><br/><div>$getPreview</div><br/><br/>";
+    echo "<div><div class='conts'><u>PREVIEW URL:</u><br><div><i>$getPreview</i></div></div><br>";
 
     $headers[1] = 'Content-Type: text/html';
     $theRedirect = returnRes('GET', $getPreview, NULL, NULL, false);
-    echo "<br/><u>REDIRECT RETURN (don't click link - collecting href):</u><br/><div>$theRedirect</div><br/><br/>";
+    echo "<div class='conts'><u>REDIRECT RETURN (don't click link - collecting href):</u><br>".
+		"<div><b>$theRedirect</b></div></div><br>";
     $headers[1] = 'Content-Type: text/plain';
 
 	// build proper URI string
@@ -100,17 +99,18 @@ function getReqdData() {
 	$redReturn = explode('">', $redReturn)[0];
 	$redReturn = explode('/view', $redReturn)[0];
 	$redReturn .= '/annotated.pdf';
-    echo "<br/><u>REDIRECT URL (TUNED UP):</u><br/>".$redReturn."<br/><br/>";
+    echo "<div class='conts'><u>REDIRECT URL (TUNED UP):</u><br><div><i>$redReturn</i></div></div><br>";
 
     // POST to the htmlReturn redirect URL. should get 'Accepted' as return data.
     $startAnnoBuild = returnRes('POST', $redReturn, NULL, NULL, false);
-	echo "<br/><u>WAS POST ACCEPTED OR NOT?</u><br/><div>$startAnnoBuild</div><br/>";
+	echo "<div class='conts'><u>WAS 'POST' QUERY ACCEPTED OR NOT?</u><br><div><b>$startAnnoBuild</b></div></div><br>";
 	
 	if($startAnnoBuild === 'Accepted') {
 		$headers[1] = 'Content-Type: application/json';
-		checkingReady($redReturn, 0);
+		echo "<div class='conts'><u>WAITING FOR DOC READY:</u>";
+		echo checkingReady($redReturn, 0)."</div>";
 	} else {
-		echo "<br/>Canvas said we can't build this annotated PDF - something went wrong.";
+		echo "<br>Canvas said we can't build this annotated PDF - something went wrong.";
 	}
 	echo "</div>";
 }
@@ -121,15 +121,18 @@ function checkingReady(String $annoReady, int $numTries) {
 		$checkReady = returnRes('GET', $readyCheckStr);
 		if($checkReady && $checkReady['ready'] === true) {
 			$totalTime = $numTries * 150 . '';
-			echo "<div>Document preparation took ~$totalTime milliseconds.</div>";
-			echo "<br/><br/><a id='getThisFile' href='$annoReady'>DOWNLOAD FILE</a>";
+			echo "<div><i>TRY #$numTries</i></div>";
+			echo "<div><b>Document preparation took ~$totalTime milliseconds.</b></div>";
+			echo "<br><a id='getThisFile' href='$annoReady'>DOWNLOAD FILE</a>";
 		} else {
-			echo "<br/>TRY  #$numTries";
+			if($numTries === 0) {
+				echo "<div><i>TRY  #$numTries</i></div><div>...</div>";
+			}
 			usleep(150);
 			checkingReady($annoReady, $numTries+1);
 		}
 	} else {
-		echo "<br/><h4>Ah, no good. Bummer!</h4>";
+		echo "<br><h4>Ah, no good. Bummer!</h4>";
 	}
 }
 
