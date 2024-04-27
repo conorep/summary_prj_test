@@ -91,7 +91,7 @@ function getReqdData() {
     $headers[1] = 'Content-Type: text/html';
     $theRedirect = returnRes('GET', $getPreview, NULL, NULL, false);
     echo "<div class='conts'><u>REDIRECT RETURN (don't click link - collecting href):</u><br>".
-		"<div><b>$theRedirect</b></div></div><br>";
+		"<div><b><i>$theRedirect</i></b></div></div><br>";
     $headers[1] = 'Content-Type: text/plain';
 
 	// build proper URI string
@@ -103,7 +103,7 @@ function getReqdData() {
 
     // POST to the htmlReturn redirect URL. should get 'Accepted' as return data.
     $startAnnoBuild = returnRes('POST', $redReturn, NULL, NULL, false);
-	echo "<div class='conts'><u>WAS 'POST' QUERY ACCEPTED OR NOT?</u><br><div><b>$startAnnoBuild</b></div></div><br>";
+	echo "<div class='conts'><u>WAS 'POST' QUERY ACCEPTED OR NOT?</u><br><div><b><i>$startAnnoBuild</i></b></div></div><br>";
 	
 	if($startAnnoBuild === 'Accepted') {
 		$headers[1] = 'Content-Type: application/json';
