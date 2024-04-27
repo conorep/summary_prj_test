@@ -7,7 +7,7 @@
   <title>Testing Annotated PDF Queries</title>
 </head>
 <body>
-  <div>
+  <div id='mainCont'>
     <?php include 'get_assn.php'; ?>
   </div>
   <script type='application/javascript' src='scripts/scripting.tsx'></script>
