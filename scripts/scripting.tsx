@@ -16,7 +16,7 @@ const toggleShowJSON = () : void => {
 const timeout200 = (doThis: Function, theString : String) : void => {
     setTimeout(() => {
         doThis();
-        hiderButton.innerHTML = theString+' JSON data?';
+        hiderButton.innerHTML = theString+' Submission JSON data?';
     }, 200);
 }
 
