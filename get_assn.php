@@ -47,7 +47,7 @@ function printRes(string $method, string $url, array $data, string $printStateme
 function buildRes(array $resURL): string {
 	$printedRes = json_encode($resURL, JSON_PRETTY_PRINT);
 	return
-		"<div id='centerBtn'><button type='button' id='jsonShower'>Show JSON data?</button></div>
+		"<div id='centerBtn'><button type='button' id='jsonShower'>Show Submission JSON data?</button></div>
 		 <div class='formatJson'>
 			<div class='initHide'><u>SUBMISSION DATA:</u><pre>$printedRes</pre></div>
 		 </div>";
